@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Banig – typing practice that weaves</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Spline+Sans+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e8f1ee;--surface:#fff;--ink:#1c1a2b;--mute:#6a6780;--line:#c5d3ce;--pink:#d6246e;--orange:#f28c1e;--yellow:#f5c518;--green:#2e9c5b;--teal:#0f8b9a;--violet:#4b3bbf;--err:#e5254b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14121f;--surface:#1f1c33;--ink:#f2eefc;--mute:#a7a2c2;--line:#38334f}}
+:root[data-theme="dark"]{--bg:#14121f;--surface:#1f1c33;--ink:#f2eefc;--mute:#a7a2c2;--line:#38334f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Bricolage Grotesque",system-ui,sans-serif}
+.wrap{max-width:920px;margin:0 auto;padding:26px 18px 56px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{display:grid;grid-template-columns:repeat(3,10px);gap:2px}
+.mark i{width:10px;height:10px;border-radius:2px;background:var(--c)}
+h1{margin:0;font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.tag{margin:2px 0 0;color:var(--mute);font-size:14px}
+.controls{display:flex;gap:10px;flex-wrap:wrap}
+.seg{display:flex;border:2px solid var(--ink);border-radius:999px;overflow:hidden}
+.seg button{font:inherit;font-size:14px;font-weight:500;padding:7px 14px;border:0;background:transparent;color:var(--ink);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.seg button:focus-visible,.again:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
+.stats{display:flex;gap:clamp(20px,6vw,56px);margin:6px 0 14px}
+.stat b{display:block;font-size:clamp(38px,8vw,66px);font-weight:800;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--mute)}
+.stage{position:relative;background:var(--surface);border:2px solid var(--ink);border-radius:16px;padding:20px 24px;font-family:"Spline Sans Mono",ui-monospace,monospace}
+.view{font-size:clamp(20px,3.3vw,30px);line-height:1.75;height:calc(3 * 1.75em);overflow:hidden}
+#txt{position:relative;white-space:pre-wrap;word-break:normal;transition:transform .12s}
+.ch{color:var(--mute);opacity:.8}
+.ch.ok{color:var(--ink);opacity:1}
+.ch.bad{color:var(--err);opacity:1;background:color-mix(in srgb,var(--err) 18%,transparent);border-radius:3px}
+.ch.cur{position:relative;opacity:1;color:var(--ink)}
+.ch.cur::after{content:"";position:absolute;left:0;right:0;bottom:.12em;height:3px;border-radius:2px;background:var(--pink);animation:blink 1s steps(2,jump-none) infinite}
+@keyframes blink{50%{opacity:.15}}
+.hint{position:absolute;right:16px;bottom:8px;margin:0;font:13px "Bricolage Grotesque",sans-serif;color:var(--mute)}
+.result{margin:16px 0 0;padding:16px 20px;border:2px solid var(--ink);border-radius:16px;background:var(--yellow);color:#1c1a2b;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.result[hidden],.hint[hidden]{display:none}
+.result strong{font-size:22px;font-weight:800;display:block;line-height:1.2}
+.result span{font-size:14px}
+.again{font:inherit;font-weight:800;border:2px solid #1c1a2b;background:#1c1a2b;color:#fff;padding:9px 18px;border-radius:999px;cursor:pointer}
+.matbox{margin-top:22px}
+.mat{display:grid;grid-template-columns:repeat(30,1fr);gap:2px;padding:10px;background:var(--surface);border:2px solid var(--ink);border-radius:16px}
+.cell{aspect-ratio:1;border-radius:2px;background:var(--line);opacity:.55}
+.cell.f{background:var(--c);opacity:1;box-shadow:inset 0 0 0 1px rgba(0,0,0,.14);animation:pop .16s}
+.cell.f.w{filter:brightness(.8)}
+.cell.g{opacity:1;background:repeating-linear-gradient(45deg,transparent 0 2px,var(--err) 2px 4px)}
+@keyframes pop{from{transform:scale(.3)}}
+.cap{margin:8px 2px 0;font-size:13px;color:var(--mute);max-width:70ch}
+.kb{margin-top:20px}
+.row{display:flex;gap:6px;justify-content:center;margin-bottom:6px}
+.key{width:clamp(24px,7vw,56px);height:clamp(32px,7vw,50px);border-radius:8px;background:var(--surface);border:1px solid var(--line);border-bottom:4px solid var(--c);display:grid;place-items:center;font:600 clamp(11px,2.5vw,15px) "Spline Sans Mono",monospace;color:var(--mute)}
+.key.next{background:var(--c);color:#1c1a2b;border-color:var(--c);transform:translateY(2px)}
+.key.hit{outline:3px solid var(--ink)}
+.key.miss{outline:3px solid var(--err)}
+.key.space{width:min(58vw,330px)}
+.foot{margin-top:26px;font-size:13px;color:var(--mute)}
+@media (prefers-reduced-motion:reduce){.cell.f,.ch.cur::after{animation:none}#txt{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="mark" aria-hidden="true"><i style="--c:var(--pink)"></i><i style="--c:var(--orange)"></i><i style="--c:var(--yellow)"></i><i style="--c:var(--orange)"></i><i style="--c:var(--yellow)"></i><i style="--c:var(--green)"></i><i style="--c:var(--yellow)"></i><i style="--c:var(--green)"></i><i style="--c:var(--teal)"></i></div>
+      <div><h1>Banig</h1><p class="tag">Typing practice where every key weaves a stitch.</p></div>
+    </div>
+    <div class="controls">
+      <div class="seg" id="modes" role="group" aria-label="Word list">
+        <button data-mode="home" aria-pressed="false">Home row</button>
+        <button data-mode="english" aria-pressed="true">Everyday</button>
+        <button data-mode="bisaya" aria-pressed="false">Bisaya</button>
+      </div>
+      <div class="seg" id="durs" role="group" aria-label="Duration">
+        <button data-dur="30" aria-pressed="true">30s</button>
+        <button data-dur="60" aria-pressed="false">60s</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="stats" aria-live="off">
+    <div class="stat"><b id="tleft">30</b><span>seconds left</span></div>
+    <div class="stat"><b id="wpm">0</b><span>words per minute</span></div>
+    <div class="stat"><b id="acc">100%</b><span>accuracy</span></div>
+  </div>
+
+  <div class="stage">
+    <div class="view"><div id="txt"></div></div>
+    <p class="hint" id="hint">Start typing to begin. Esc restarts.</p>
+  </div>
+
+  <div class="result" id="res" hidden role="status">
+    <div><strong id="resMain"></strong><span id="resSub"></span></div>
+    <button class="again" id="again">Weave again</button>
+  </div>
+
+  <div class="matbox">
+    <div class="mat" id="mat" aria-label="Your woven banig"></div>
+    <p class="cap">A banig is a handwoven sleeping mat. Yours is woven from the keys you type: each stitch takes the colour of the finger that should press it, and a mistake leaves a red-striped hole.</p>
+  </div>
+
+  <div class="kb" id="kb" aria-hidden="true"></div>
+  <p class="foot">Made for a physical keyboard. Backspace fixes a mistake, Enter weaves again after a round.</p>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const SENT={
+  home:["sad fad lad gas has ash gal hal lash flag half slash flask salad glad shall hall fall dash gasp","ask add sad lad had has gas dad hag","sad fad lad gas has ash gal hal lash flag half slash flask salad glad shall hall fall dash gasp"],
+  english:["The water rushed down the mountain as the sun lit the house where people worked with green paper under the night sky.","A little world waited every again before bright simple gentle morning came to the market island.","Rain fell on a smile story window in summer garden where travel music filled the ocean forest.","She wrote a letter to her friend who lived across the ocean in a small forest village near the mountain.","Every morning the baker opened his shop and filled the street with the smell of fresh bread and warm coffee.","The train left at dawn carrying passengers to cities where lights never slept and stories never ended.","In the library she found an old book with maps of islands no one had visited for a hundred years.","The cat slept on the windowsill while rain tapped against the glass and the wind moved the trees outside.","He planted seeds in the garden and waited for the spring when green shoots would break the dark soil.","The moon rose over the quiet lake where fishermen cast their nets under a silver sky.","A ship sailed across the blue sea carrying spices silk and gold to distant ports.","Children played in the park chasing kites that danced above the green grass.","The old clock tower rang every hour reminding everyone that time never stops moving.","Stars blinked above the desert where travelers rested beside a small campfire.","A painter stood before a blank canvas mixing colors to capture the setting sun.","The library smelled of old paper leather bindings and dust from forgotten shelves.","She walked through the forest listening to birds singing in the tall trees.","A storm rolled in from the east bringing thunder lightning and heavy rain.","The farmer plowed the field before sunrise preparing the earth for new crops.","Birds flew south for the winter as the autumn leaves turned gold and red.","A lighthouse guided ships safely to shore through the dark and stormy night.","The market buzzed with vendors selling fruits vegetables and handmade crafts.","He read a novel by the fireplace while snow fell quietly outside the window.","The river flowed gently through the valley reflecting the clouds in its clear water.","A bee hovered over a flower gathering nectar to make sweet honey.","The old wooden bridge creaked as travelers crossed the rushing stream below.","She baked a cake for her friend's birthday with chocolate frosting and candles.","The detective examined the clues searching for the truth behind the mystery.","A butterfly landed on a rose petal resting in the warm afternoon sun.","The school bell rang calling students back to their classrooms after lunch.","He ran along the beach feeling the sand between his toes and the wind in his hair.","The garden bloomed with roses tulips and daisies in every color imaginable.","A train whistle echoed through the valley as the locomotive approached the station.","She painted the walls of her room with bright yellow and soft blue colors.","The owl hooted in the night watching the forest from a high branch.","A fisherman mended his nets by the shore preparing for the next day at sea.","The cafe served hot tea fresh pastries and warm smiles to every customer.","He climbed the mountain trail reaching the peak where the view stretched for miles.","A snowflake landed on her nose melting instantly in the cold winter air.","The orchestra played a symphony filling the concert hall with beautiful music.","She sewed a quilt from scraps of fabric each piece telling a different story.","The rocket launched into space carrying astronauts toward the stars and beyond.","A turtle crawled slowly across the sand heading toward the ocean waves.","The bakery opened early filling the air with the scent of warm croissants.","He watched the sunset paint the sky in shades of orange pink and purple.","A train carried passengers through tunnels bridges and rolling countryside hills.","The farmer harvested the wheat storing the golden grain in the barn.","She sang a lullaby to her child until sleep closed the little eyes.","A comet streaked across the night sky leaving a trail of bright light.","The museum displayed ancient artifacts pottery and paintings from long ago.","He walked the dog through the park on a crisp autumn morning.","A waterfall crashed into the pool below sending mist into the cool air.","The library hosted a story hour where children gathered to hear tales.","She planted trees along the roadside to shade future travelers from the sun."],
+  bisaya:["Maayong buntag sa inyong tanan.","Kumusta ka na, higala ko?","Ang balay namo malampusaon sa daghang tanom.","Naka-eskwela siya sa dakbayan.","Nagluto ang nanay ug kanin para sa pamilya.","Dakong buntag ang adlaw karon.","Ang bata naglaro sa parke sa iyang mga higala.","Miadto ako sa merkado kahapon.","Napait ang kaon kay walay asin.","Ang isda naglangoy sa tubig.","Nakakita ko og lamok sa gabii.","Ang bata miingon og salamat sa iyang maestra.","Nag-uwi siya sa ilalim sa buntag.","Ang lansangan naay mga sasakyan ug mga tawo.","Nakapauli siya sa iyang paminaw.","Ang babae nagbasa og libro sa lanot.","Dakong bagyo ang nakita natun sa langit.","Ang bata nagkomyuon sa iyang mga higala.","Maayo ang panahon para sa paglakaw sa baybayon.","Ang nanay nagpalit og prutas sa merkado.","Nakapalit siya og bag-ong sapatos sa tindahan.","Ang iro miingon sa iyang amo.","Ang bata nagdala og regalo sa iyang igsoon.","Nakapuyo siya sa dakbayan sa dakong lanot.","Ang bata nagtuon sa iyang eskwelahan.","Ang mangingisda naglumad og isda sa suba.","Ang babae nagputol ug saging sa bukid.","Dakong bulan ang nakita natun sa langit sa gabii.","Ang bata nagkanta sa kanta sa radio.","Ang nanay nag-ampo sa simba sa buntag.","Nakapalit siya og bag-ong balay sa probinsya.","Ang bata nagtuon sa iyang asignatura sa eskwelahan.","Ang lalaki naglakaw sa tabok sa lansangan.","Ang babae nagluto ug kanin para sa iyang pamilya.","Nakakita siya og dakong puno sa bukid.","Ang bata nagdala og tubig sa iyang balon.","Ang mangingisda nagbenta og isda sa merkado.","Dakong lanot ang nakita natun sa ilalim sa dagat.","Ang bata nagtuon sa iyang palitra sa eskwelahan.","Ang lalaki nagtanom og mais sa bukid.","Ang babae nagdala og saging sa iyang bata.","Nakapalit siya og bag-ong lubi sa merkado.","Ang bata naglaro sa dapit sa parke.","Ang lalaki naglakaw sa tabok sa baybayon.","Ang babae nagtuon sa iyang palitra sa eskwelahan.","Nakakita siya og dakong bato sa bukid.","Ang bata nagdala og libro sa iyang eskwelahan.","Ang lalaki nagtanom og saging sa bukid.","Ang babae nagdala og tubig sa iyang balay.","Nakapalit siya og bag-ong isda sa merkado."]
+};
+const FING=["pink","orange","yellow","green","green","teal","teal","yellow","orange","pink"];
+const ROWS=["qwertyuiop","asdfghjkl;","zxcvbnm,."];
+const fin={" ":"violet"},keyEl={};
+const kb=$("#kb");
+ROWS.forEach(r=>{
+  const row=document.createElement("div");row.className="row";
+  [...r].forEach((ch,i)=>{
+    fin[ch]=FING[i];
+    const k=document.createElement("div");k.className="key";k.textContent=ch;
+    k.style.setProperty("--c","var(--"+FING[i]+")");keyEl[ch]=k;row.append(k);
+  });
+  kb.append(row);
+});
+const srow=document.createElement("div");srow.className="row";
+const sp=document.createElement("div");sp.className="key space";sp.textContent="space";
+sp.style.setProperty("--c","var(--violet)");keyEl[" "]=sp;srow.append(sp);kb.append(srow);
+
+const COLS=30,CAP=COLS*12;
+const mat=$("#mat"),cells=[];
+for(let i=0;i<CAP;i++){const c=document.createElement("div");c.className="cell";mat.append(c);cells.push(c);}
+
+const txt=$("#txt"),tleft=$("#tleft"),wpmEl=$("#wpm"),accEl=$("#acc"),hint=$("#hint"),res=$("#res");
+let mode="english",dur=30,text="",chars=[],typed=[],pos=0,total=0,mist=0,started=false,done=false,t0=0,timer=null,curEl=null;
+
+let pool=[],poolIdx=0;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0,[x,y]=[a[j],a[i]];a[i]=x;a[j]=y;}return a;}
+function build(){
+  if(poolIdx>=pool.length){pool=shuffle([...SENT[mode]]);poolIdx=0;}
+  let t="",last="";
+  while(t.length<900){
+    if(poolIdx>=pool.length){pool=shuffle([...SENT[mode]]);poolIdx=0;}
+    let w=pool[poolIdx++];
+    if(w===last){continue;}
+    t+=(t?" ":"")+w;last=w;
+  }
+  text=t;txt.textContent="";txt.style.transform="";
+  chars=[...t].map(c=>{const s=document.createElement("span");s.className="ch";s.textContent=c;txt.append(s);return s;});
+}
+function mark(){
+  if(curEl)curEl.classList.remove("cur");
+  curEl=chars[pos];
+  if(curEl){
+    curEl.classList.add("cur");
+    const lh=parseFloat(getComputedStyle(txt).lineHeight)||40;
+    txt.style.transform="translateY("+(-Math.max(0,curEl.offsetTop-lh))+"px)";
+  }
+  document.querySelectorAll(".key.next").forEach(k=>k.classList.remove("next"));
+  const k=keyEl[text[pos]];if(k)k.classList.add("next");
+}
+function stitch(i,ch,ok){
+  const j=i%CAP,el=cells[j];
+  el.className="cell "+(ok?"f":"g")+((Math.floor(j/COLS)+j%COLS)%2?" w":"");
+  if(ok)el.style.setProperty("--c","var(--"+fin[ch]+")");
+}
+function flash(k,ok){
+  const el=keyEl[k];if(!el)return;
+  el.classList.add(ok?"hit":"miss");setTimeout(()=>el.classList.remove("hit","miss"),120);
+}
+function stats(sec){
+  const okc=typed.filter(Boolean).length;
+  const w=sec>=1?Math.round(okc/5/(sec/60)):0;
+  const a=total?Math.round((total-mist)/total*100):100;
+  return{w,a};
+}
+function update(){
+  const s=stats((performance.now()-t0)/1000);
+  wpmEl.textContent=s.w;accEl.textContent=s.a+"%";
+}
+function tick(){
+  const left=dur-(performance.now()-t0)/1000;
+  tleft.textContent=Math.ceil(Math.max(left,0));
+  update();
+  if(left<=0)finish();
+}
+function finish(){
+  if(done)return;done=true;clearInterval(timer);
+  const sec=Math.min(dur,(performance.now()-t0)/1000);
+  const s=stats(sec);
+  wpmEl.textContent=s.w;accEl.textContent=s.a+"%";tleft.textContent=Math.max(0,Math.ceil(dur-sec));
+  let prev=0,isBest=false;const key="banig:best:"+mode+":"+dur;
+  try{prev=+localStorage.getItem(key)||0;if(s.w>prev){localStorage.setItem(key,s.w);isBest=s.w>0&&prev>0;}}catch(e){}
+  $("#resMain").textContent=s.w+" WPM at "+s.a+"% accuracy";
+  $("#resSub").textContent=isBest?"That’s a new best for this list and time.":(prev>s.w?"Your best here is "+prev+" WPM.":"Your banig is below. Press Enter to weave another.");
+  res.hidden=false;hint.hidden=true;
+  document.querySelectorAll(".key.next").forEach(k=>k.classList.remove("next"));
+}
+function reset(){
+  clearInterval(timer);started=done=false;pos=0;total=mist=0;typed=[];curEl=null;
+  build();
+  cells.forEach(c=>{c.className="cell";c.style.removeProperty("--c");});
+  res.hidden=true;hint.hidden=false;
+  tleft.textContent=dur;wpmEl.textContent="0";accEl.textContent="100%";
+  mark();
+}
+
+addEventListener("keydown",e=>{
+  if(e.ctrlKey||e.metaKey||e.altKey)return;
+  if(e.key==="Escape"||(done&&e.key==="Enter")){e.preventDefault();reset();return;}
+  if(done)return;
+  if(e.key==="Backspace"){
+    e.preventDefault();
+    if(pos>0){pos--;chars[pos].className="ch";typed.pop();cells[pos%CAP].className="cell";}
+    mark();return;
+  }
+  if(e.key.length!==1)return;
+  e.preventDefault();
+  if(!started){started=true;t0=performance.now();timer=setInterval(tick,100);hint.hidden=true;}
+  const want=text[pos],k=e.key.toLowerCase(),ok=k===want;
+  total++;if(!ok)mist++;
+  flash(k,ok);
+  typed.push(ok);chars[pos].className="ch "+(ok?"ok":"bad");stitch(pos,want,ok);pos++;
+  if(pos>=text.length){finish();}else{mark();update();}
+});
+addEventListener("keyup",e=>{if(e.key===" "&&e.target.tagName==="BUTTON")e.preventDefault();});
+
+function bind(id,attr,fn){
+  $(id).addEventListener("click",e=>{
+    const b=e.target.closest("button");if(!b)return;
+    $(id).querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));
+    fn(b.dataset[attr]);b.blur();
+  });
+}
+bind("#modes","mode",v=>{mode=v;reset();});
+bind("#durs","dur",v=>{dur=+v;reset();});
+$("#again").addEventListener("click",e=>{reset();e.target.blur();});
+reset();
+</script>
+</body>
+</html>
